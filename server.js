@@ -11,5 +11,5 @@ let add = require("./routes/routes");
 app.use("/", add);
 
 app.listen(PORT, (req, res) => {
-  console.log(`https://localhost:${PORT}`);
+  console.log(`http://localhost:${PORT}`);
 });

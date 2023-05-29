@@ -2,14 +2,18 @@ const db = require("../models/index");
 const User = db.users;
 console.log(User);
 
-var search = async (req, res) => {
-  const data = await User.bulkCreate({
-    id:1,
-    categoryName: "electronics",
-  });
-  console.log("data insert");
-  // res.send(data);
-  res.json(data)
+const search = async (req, res) => {
+  console.log("bjasbjkasb");
+  const data = await User.bulkCreate([{
+    categoryName: "grocery",
+  },{
+categoryName:"stationary"
+  }]);
+  // console.log(data.categoryName);
+  // await data.save();
+  // console.log("data insert");
+  res.send(data);
+  // res.json(data);
 };
 
 module.exports = { search };
