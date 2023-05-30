@@ -14,7 +14,13 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   users.init({
-    categoryName: DataTypes.STRING,
+    categoryName: {
+      type:DataTypes.STRING,
+     get() {
+      const rawValue = this.getDataValue("categoryName");
+      return rawValue ? rawValue.toUpperCase() : null;
+    }
+    },
     isAvailable:DataTypes.STRING,
     quentity:DataTypes.INTEGER
   }, {

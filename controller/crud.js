@@ -7,11 +7,11 @@ const { Op } = require("sequelize");
 const addData = async (req, res) => {
   let addDatas = req.body;
   // const addedData=null;
-  // if (addDatas.length > 1) {
-    const addedData = await User.bulkCreate(addDatas);
-  // } else {
-    //  addedData = await User.create(addDatas);
-  // }
+  if (addDatas.length > 1) {
+    var addedData = await User.bulkCreate(addDatas);
+  } else {
+    var addedData = await User.create(addDatas);
+  }
   // res.json(data);
   res.status(200).json({ data: addedData });
 
@@ -30,44 +30,32 @@ const addData = async (req, res) => {
 };
 
 const deleteData = async (req, res) => {
-  console.log("delete data");
-
   // delete data using condition
   // const users=null;
-  for(let i = 89;i<94;i++){
-
-  var   users = await User.destroy({
-      where: {
-        id: {
-          [Op.or]: [i+1],
-        },
-      },
-    });
-  }
+  const users = await User.destroy({
+    where: {
+      id: req.params.id,
+    },
+  });
 
   console.log("All deleted users:", JSON.stringify(users, null, 2));
   res.send(JSON.stringify(users, null, 2));
 };
 const updateData = async (req, res) => {
-  console.log("updated data");
+  const updatedData = req.body;
   // Change everyone without a last name to "Doe"
-  const users = await User.update(
-    { categoryName: "Stationary" },
-    {
-      where: {
-        id: [22, 24, 26],
-      },
-    }
-  );
+  const users = await User.update(updatedData, {
+    where: {
+      id: req.params.id,
+    },
+  });
   console.log("all updated data:", JSON.stringify(users, null, 2));
   res.send(JSON.stringify(users, null, 2));
 };
 
 const showData = async (req, res) => {
-  console.log("show datas");
   // Find all users-----------------------------
   // const users = await User.findAll();
-
   // this use for specific field show-----------------------------
   const users = await User.findAll({
     attributes: ["categoryName", "quentity", "id"],
@@ -164,6 +152,7 @@ const showData = async (req, res) => {
   console.log("All users:", JSON.stringify(users, null, 2));
   res.send(JSON.stringify(users, null, 2));
 };
+
 const getUser = async (req, res) => {
   const users = await User.findOne({
     where: {
@@ -173,4 +162,59 @@ const getUser = async (req, res) => {
   res.status(200).json({ data: users });
 };
 
-module.exports = { addData, deleteData, showData, updateData, getUser };
+const findUser = async (req, res) => {
+  // const users = await User.findAll({
+  //   where: {
+  //     categoryName: "Grosery",
+  //   },
+  // });
+
+  // const users = await User.findOne({
+  //   where: {
+  //     categoryName: "Grosery",
+  //   },
+  // });
+
+  // find by pk
+  // const users = await User.findByPk(4);
+
+  // find or create
+  // const [users, created] = await User.findOrCreate({
+  //   where: {
+  //     categoryName: "Fabrics",
+  //     quentity: 1200,
+  //   },
+  //   default: {
+  //     isAvailable: "yes",
+  //   },
+  // });
+
+  // find and count all
+  const { count, rows } = await User.findAndCountAll({
+    where: {
+      categoryName: "Grosery",
+    },
+  });
+
+
+  res.status(200).json({ data: rows, count });
+};
+
+const getSetVirtualUser = async(req,res)=>{
+  const data = await User.findAll({
+    where:{
+      categoryName:"Grosery"
+    }
+  })
+  res.status(200).json(data);
+}
+
+module.exports = {
+  addData,
+  deleteData,
+  showData,
+  updateData,
+  getUser,
+  findUser,
+  getSetVirtualUser,
+};
