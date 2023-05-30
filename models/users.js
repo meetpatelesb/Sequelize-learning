@@ -14,7 +14,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   users.init({
-    categoryName: DataTypes.STRING
+    categoryName: DataTypes.STRING,
+    isAvailable:DataTypes.STRING,
+    quentity:DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'users',

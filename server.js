@@ -7,8 +7,8 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
 
 
-let add = require("./routes/routes");
-app.use("/", add);
+let crud = require("./routes/routes");
+app.use("/", crud);
 
 app.listen(PORT, (req, res) => {
   console.log(`http://localhost:${PORT}`);
