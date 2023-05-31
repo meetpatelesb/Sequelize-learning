@@ -2,7 +2,7 @@ const { sequelize, Sequelize } = require("../models/index");
 const db = require("../models/index");
 const User = db.users;
 console.log(User);
-const { Op } = require("sequelize");
+const { Op, QueryTypes } = require("sequelize");
 
 const addData = async (req, res) => {
   let addDatas = req.body;
@@ -196,18 +196,77 @@ const findUser = async (req, res) => {
     },
   });
 
-
   res.status(200).json({ data: rows, count });
 };
 
-const getSetVirtualUser = async(req,res)=>{
-  const data = await User.findAll({
-    where:{
-      categoryName:"Grosery"
+const getSetVirtualUser = async (req, res) => {
+  // get datas-------
+  const dataGet = await User.findAll({
+    where: {
+      categoryName: "Grosery",
+    },
+  });
+
+  // set datas-----------------------
+  // let addSetData=req.body;
+  //   const data = await User.create(addSetData);
+  // const data = await User.create({
+  //   categoryName:"Office tools",
+  //   quentity:280,
+  //   isAvailable:"yes"
+  // })
+  res.status(200).json({ dataGet });
+};
+
+const rawQuery = async (req, res) => {
+  // const users = await sequelize.query("SELECT * FROM `users`", {
+  //   type: QueryTypes.SELECT,
+  //   // model:User,
+  //   // mapToModel:true,
+  // });
+
+  // where conditions
+  // const users = await sequelize.query("SELECT * FROM users WHERE id = ?", {
+  //   replacements: ["4"],
+  //   type: QueryTypes.SELECT,
+  // });
+
+
+
+  // where IN condition
+
+  // const users = await sequelize.query("SELECT * FROM users WHERE id  IN (:id) ", {
+  //   replacements: {id: ['4','5','6']},
+  //   type: QueryTypes.SELECT,
+    
+  // });
+
+
+  // like 
+
+  // const users = await sequelize.query(
+  //   "SELECT * FROM users WHERE categoryName LIKE :searchName ",
+  //   {
+  //     replacements: { searchName: "%o%" },
+  //     type: QueryTypes.SELECT,
+  //   }
+  // );
+
+
+  // bind.....
+
+  const users = await sequelize.query(
+    "SELECT * FROM users WHERE id=$id ",
+    {
+     bind:{id:'6'},
+      type: QueryTypes.SELECT,
     }
-  })
-  res.status(200).json(data);
-}
+  );
+
+
+  res.status(200).json({ users });
+  console.log(JSON.stringify(users, null, 10));
+};
 
 module.exports = {
   addData,
@@ -217,4 +276,5 @@ module.exports = {
   getUser,
   findUser,
   getSetVirtualUser,
+  rawQuery,
 };

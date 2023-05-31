@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class users extends Model {
     /**
@@ -13,19 +11,38 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  users.init({
-    categoryName: {
-      type:DataTypes.STRING,
-     get() {
-      const rawValue = this.getDataValue("categoryName");
-      return rawValue ? rawValue.toUpperCase() : null;
-    }
+  users.init(
+    {
+      categoryName: {
+        type: DataTypes.STRING,
+        get() {
+          const rawValue = this.getDataValue("categoryName");
+          return rawValue ? "Mr." + rawValue.toUpperCase() : null;
+        },
+      },
+      isAvailable: {
+        type: DataTypes.STRING,
+        // set(value) {
+          // Storing passwords in plaintext in the database is terrible.
+          // Hashing the value with an appropriate cryptographic hash function is better.
+        //   this.setDataValue("isAvailable", "is" + value);
+        // },
+      },
+      quentity: DataTypes.INTEGER,
+      categoryIsAvailable: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return `${this.categoryName} is ${this.isAvailable}`;
+        },
+        set(value) {
+          throw new Error("Do not try to set the `fullName` value!");
+        },
+      },
     },
-    isAvailable:DataTypes.STRING,
-    quentity:DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'users',
-  });
+    {
+      sequelize,
+      modelName: "users",
+    }
+  );
   return users;
 };
