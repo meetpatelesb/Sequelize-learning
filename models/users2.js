@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
 
       users2.hasMany(models.Bank, {
         foreignKey: "user_id",
-        as: "bankDetails",
+        // as: "bankDetails",
       });
       users2.belongsToMany(models.flat, {
         through: "user_flats",

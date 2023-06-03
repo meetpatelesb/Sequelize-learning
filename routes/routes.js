@@ -22,6 +22,9 @@ router.post("/onetoone", userCrud.oneToOneUser);
 router.post("/onetomany", userCrud.oneToManyUsers);
 router.get("/otmbankdata/:id", userCrud.oneToManyData);
 
+// CHECKING ONE TO MANY
+router.post("/insert", userCrud.personData);
+
 // -----MANY TO MANY------
 router.post("/mtm", userCrud.manyToManyData);
 router.post("/manykey", userCrud.manyToManyKeyData);
@@ -33,6 +36,15 @@ router.get("/showuserflat", userCrud.manyToManyDataShowUserFlat);
 router.post('/parainsert',userCrud.paranoidInsert)
 router.delete("/paradelete/:id", userCrud.paranoiddeleteData);
 router.get("/parashow", userCrud.paranoidshow);
+
+
+// transaction
+router.post('/transaction',userCrud.transaction)
+router.post("/transaction2", userCrud.transaction2);
+
+
+// polymorphic relations
+router.post('/poly',userCrud.onetomanyPoly)
 
 
 

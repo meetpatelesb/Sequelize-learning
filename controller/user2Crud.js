@@ -1,3 +1,5 @@
+const bank = require("../models/bank");
+const groups = require("../models/groups");
 const db = require("../models/index");
 const user_flat = require("../models/user_flat");
 const User2 = db.users2;
@@ -7,15 +9,23 @@ const Flat = db.flat;
 const UserFlat = db.user_flat;
 const User = db.users;
 const User3 = db.paranoid_user;
+const Image = db.image;
+const Comment = db.comment;
+
+
+// check one to many
+const People = db.person;
+const Group = db.groups;
+
 const oneToOneUser = async (req, res) => {
   // const t = await db.sequelize.transaction();
   try {
     // insert card data only -------------
-    const data = await Card.create({
-      cardName: "aadharCard",
-      cardNO: 85659562,
-      user_id: 12,
-    });
+    // const data = await Card.create({
+    //   cardName: "aadharCard",
+    //   cardNO: 85659562,
+    //   user_id: 12,
+    // });
 
     // ---------------insert values with simple using id -----
 
@@ -71,15 +81,14 @@ const oneToOneUser = async (req, res) => {
 };
 
 const oneToManyUsers = async (req, res) => {
-  console.log("inserted");
   try {
     // insert data into table---------------
-    let insertData = req.body;
-    if (insertData.length > 1) {
-      var addedData = await Bank.bulkCreate(insertData);
-    } else {
-      var addedData = await Bank.create(insertData);
-    }
+    // let insertData = req.body;
+    // if (insertData.length > 1) {
+    //   var addedData = await Bank.bulkCreate(insertData);
+    // } else {
+    //   var addedData = await Bank.create(insertData);
+    // }
 
     // insert data into table---------------
     // const userDatas = await Bank.create({
@@ -88,6 +97,31 @@ const oneToManyUsers = async (req, res) => {
     //   accountNo: 311110110005656,
     //   city: "ahmedabad",
     //   accountType: "saving",
+    // });
+
+    //
+    let insertData = req.body;
+    const addedData = await User2.bulkCreate(
+      insertData,
+      // {
+      //   firstame: "rajkumar",
+      //   lastame: "patel",
+      //   // table name//
+      //   Banks: {
+      //     bankName: "boi",
+      //     accountNo: 311110110005458,
+      //     city: "ahmedabad",
+      //     accountType: "saving",
+      //   },
+      // },
+
+      { include: { model: Bank } }
+    );
+
+    // const addedDataShow = await User2.findAll({
+    //   include: {
+    //     model: Bank,
+    //   },
     // });
 
     res.status(200).json({ addedData });
@@ -209,6 +243,85 @@ const paranoidshow = async (req, res) => {
   res.status(200).json({ data });
 };
 
+const personData = async (req, res) => {
+  let insertData = req.body;
+  const t = await db.sequelize.transaction();
+
+  try {
+    var data = await People.bulkCreate(
+      insertData,
+      {
+        include: { model: Group },
+      },
+      { transaction: t }
+    );
+    res.status(200).json({ data });
+    await t.commit();
+    console.log("commit");
+  } catch (err) {
+    await t.rollback();
+    console.log("rollback");
+    // console.log(data.id);
+    // await People.destroy({
+    //   where: {
+    //     id: [22, 23, 24],
+    //   },
+    // });
+  }
+};
+
+const transaction = async (req, res) => {
+  let insertData = req.body;
+  var data;
+  const t = await db.sequelize.transaction();
+  try {
+    // const result = await db.sequelize.transaction(async (t) => {
+    data = await People.bulkCreate(
+      insertData,
+      {
+        include: { model: Group },
+        transaction: t,
+      }
+      // { transaction: t }
+    );
+    await t.commit();
+    res.status(200).json({ data });
+    console.log("result", result);
+  } catch (err) {
+    await t.rollback();
+    console.log("error", err.message);
+  }
+  return;
+};
+
+const transaction2 = async (req, res) => {
+  let insertData = req.body;
+  var data;
+
+  try {
+    const result = await db.sequelize.transaction(async (t) => {
+      data = await People.bulkCreate(
+        insertData,
+        {
+          include: { model: Group },
+          // transaction: t,
+        }
+        // { transaction: t }
+      );
+      await t.commit();
+      res.status(200).json({ data });
+      console.log("result", result);
+    });
+  }catch(err){
+
+  } 
+};
+
+
+const onetomanyPoly = async(req,res)=>{
+ const data = await 
+  res.status(200).json({data:"good"})
+}
 module.exports = {
   oneToOneUser,
   oneToManyUsers,
@@ -220,4 +333,8 @@ module.exports = {
   paranoidInsert,
   paranoiddeleteData,
   paranoidshow,
+  personData,
+  transaction,
+  transaction2,
+  onetomanyPoly,
 };
