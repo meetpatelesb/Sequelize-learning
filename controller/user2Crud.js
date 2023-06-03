@@ -12,7 +12,6 @@ const User3 = db.paranoid_user;
 const Image = db.image;
 const Comment = db.comment;
 
-
 // check one to many
 const People = db.person;
 const Group = db.groups;
@@ -312,16 +311,33 @@ const transaction2 = async (req, res) => {
       res.status(200).json({ data });
       console.log("result", result);
     });
-  }catch(err){
-
-  } 
+  } catch (err) {}
 };
 
-
-const onetomanyPoly = async(req,res)=>{
- const data = await 
-  res.status(200).json({data:"good"})
-}
+const onetomanyPoly = async (req, res) => {
+  try {
+    const result = await db.sequelize.transaction(async (t) => {
+      const data = await Image.create(
+        {
+          name: "meet.jpg",
+          path: "/meet/images/personal",
+          comments: {
+            comment: "good",
+            comment_type: "image",
+          },
+        },
+        {
+          include: {
+            model: Comment,
+          },
+        }
+      );
+      await t.commit();
+      res.status(200).json({ data });
+      console.log(result);
+    });
+  } catch (err) {}
+};
 module.exports = {
   oneToOneUser,
   oneToManyUsers,
