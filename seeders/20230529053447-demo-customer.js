@@ -7,14 +7,15 @@ module.exports = {
       "Customers",
       [
         {
-          firstName: "Meet",
+          firstName: "meetraj",
           lastName: "Vaghasiya",
           email: "meet@gmail.com",
           createdAt: new Date(),
           updatedAt: new Date(),
-        },
+        }
+        ,
         {
-          firstName: "Sanisinh",
+          firstName: "Sanisinh2",
           lastName: "Rajput",
           email: "sani@gmail.com",
           createdAt: new Date(),
